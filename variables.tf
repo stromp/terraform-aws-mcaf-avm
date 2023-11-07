@@ -48,6 +48,7 @@ variable "additional_tfe_workspaces" {
     policy                         = optional(string, null)
     policy_arns                    = optional(list(string), ["arn:aws:iam::aws:policy/AdministratorAccess"])
     project_id                     = optional(string, null)
+    queue_all_runs                 = optional(bool, null)
     remote_state_consumer_ids      = optional(set(string))
     repository_identifier          = optional(string, null)
     role_name                      = optional(string, null)
@@ -129,6 +130,7 @@ variable "tfe_workspace" {
     policy                         = optional(string, null)
     policy_arns                    = optional(list(string), ["arn:aws:iam::aws:policy/AdministratorAccess"])
     project_id                     = optional(string, null)
+    queue_all_runs                 = optional(bool, null)
     remote_state_consumer_ids      = optional(set(string))
     repository_identifier          = string
     role_name                      = optional(string, "TFEPipeline")
