@@ -6,7 +6,9 @@ locals {
       // if environment, add environment = var.account.environment
       var.account.environment != null ? { environment = var.account.environment } : {},
       // if workload_boundary_arn, add workload_permissions_boundary_arn = aws_iam_policy.workload_boundary[0].arn
-      var.permissions_boundaries.workload_boundary != null && var.permissions_boundaries.workload_boundary != null ? { workload_permissions_boundary_arn = aws_iam_policy.workload_boundary[0].arn } : {}
+      var.permissions_boundaries.workload_boundary != null && var.permissions_boundaries.workload_boundary != null ? {
+        workload_permissions_boundary_arn = aws_iam_policy.workload_boundary[0].arn
+      } : {}
     )
 
     working_directory = var.account.environment != null ? "terraform/${var.account.environment}" : "terraform"
@@ -52,7 +54,7 @@ resource "aws_iam_policy" "workload_boundary" {
 
 module "tfe_workspace" {
   count     = var.create_default_workspace ? 1 : 0
-  source    = "github.com/schubergphilis/terraform-aws-mcaf-workspace?ref=v0.14.0"
+  source    = "github.com/schubergphilis/terraform-aws-mcaf-workspace?ref=v0.15.2"
   providers = { aws = aws.account }
 
   agent_pool_id                  = var.tfe_workspace.agent_pool_id
@@ -73,6 +75,7 @@ module "tfe_workspace" {
   policy                         = var.tfe_workspace.policy
   policy_arns                    = var.tfe_workspace.policy_arns
   project_id                     = var.tfe_workspace.project_id
+  queue_all_runs                 = false
   region                         = var.tfe_workspace.default_region
   remote_state_consumer_ids      = var.tfe_workspace.remote_state_consumer_ids
   repository_identifier          = var.tfe_workspace.repository_identifier
@@ -115,6 +118,7 @@ module "additional_tfe_workspaces" {
   policy                         = each.value.policy
   policy_arns                    = each.value.policy_arns
   project_id                     = each.value.project_id != null ? each.value.project_id : var.tfe_workspace.project_id
+  queue_all_runs                 = false
   region                         = coalesce(each.value.default_region, var.tfe_workspace.default_region)
   remote_state_consumer_ids      = each.value.remote_state_consumer_ids
   repository_identifier          = coalesce(each.value.repository_identifier, var.tfe_workspace.repository_identifier)
